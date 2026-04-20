@@ -1,0 +1,13 @@
+{
+  "identifier": "default",
+  "description": "Default capabilities for FontConverter",
+  "windows": [
+    "popup"
+  ],
+  "permissions": [
+    "core:default",
+    "core:window:default",
+    "global-shortcut:default",
+    "autostart:default"
+  ]
+}

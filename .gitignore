@@ -1,0 +1,17 @@
+# Build output
+/src-tauri/target/
+
+# Node.js
+/node_modules/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Temporary files
+icon_real.png
+*.log
