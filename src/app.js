@@ -31,6 +31,8 @@
         enclosed: 'Enclosed',
         special: 'Special',
         combining: 'Combining',
+        decoration: 'Decoration',
+        japanese: '日本語',
     };
 
     // --- State ---

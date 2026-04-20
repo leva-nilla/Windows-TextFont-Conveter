@@ -13,8 +13,8 @@ use tauri::{AppHandle, Emitter, Manager};
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutState};
 use winapi::shared::windef::POINT;
 use winapi::um::winuser::{
-    GetCursorPos, GetForegroundWindow, GetSystemMetrics, SetForegroundWindow, SM_CXSCREEN,
-    SM_CYSCREEN,
+    GetCursorPos, GetForegroundWindow, GetMonitorInfoW, MonitorFromPoint,
+    SetForegroundWindow, MONITORINFO, MONITOR_DEFAULTTONEAREST,
 };
 
 /// Stores the HWND of the window that was focused before our popup appeared.
@@ -25,7 +25,7 @@ static ORIGINAL_CLIPBOARD: LazyLock<Mutex<String>> =
     LazyLock::new(|| Mutex::new(String::new()));
 
 const POPUP_WIDTH: i32 = 420;
-const POPUP_HEIGHT: i32 = 520;
+const POPUP_HEIGHT: i32 = 560;
 
 #[derive(Clone, Serialize)]
 struct PopupPayload {
@@ -74,19 +74,16 @@ fn handle_shortcut(app: &AppHandle) {
             GetCursorPos(&mut cursor);
         }
 
-        // 6. Clamp position so popup stays within screen bounds
-        let screen_w = unsafe { GetSystemMetrics(SM_CXSCREEN) };
-        let screen_h = unsafe { GetSystemMetrics(SM_CYSCREEN) };
-        let x = if cursor.x + POPUP_WIDTH > screen_w {
-            screen_w - POPUP_WIDTH
-        } else {
-            cursor.x
-        };
-        let y = if cursor.y + POPUP_HEIGHT > screen_h {
-            screen_h - POPUP_HEIGHT
-        } else {
-            cursor.y
-        };
+        // 6. Get the work area of the monitor where the cursor is
+        let hmonitor = unsafe { MonitorFromPoint(cursor, MONITOR_DEFAULTTONEAREST) };
+        let mut mi: MONITORINFO = unsafe { std::mem::zeroed() };
+        mi.cbSize = std::mem::size_of::<MONITORINFO>() as u32;
+        unsafe { GetMonitorInfoW(hmonitor, &mut mi) };
+        let work = mi.rcWork;
+
+        // Clamp so popup stays within the monitor's work area (handles multi-monitor)
+        let x = cursor.x.max(work.left).min(work.right - POPUP_WIDTH);
+        let y = cursor.y.max(work.top).min(work.bottom - POPUP_HEIGHT);
 
         // 7. Position and show the popup
         if let Some(window) = app.get_webview_window("popup") {
