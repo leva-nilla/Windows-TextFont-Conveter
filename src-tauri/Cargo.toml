@@ -1,6 +1,6 @@
 [package]
 name = "font-converter"
-version = "1.0.0"
+version = "1.1.0"
 description = "Unicode Font Converter"
 edition = "2021"
 
