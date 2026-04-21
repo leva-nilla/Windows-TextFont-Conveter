@@ -10,6 +10,7 @@ use serde::Serialize;
 use tauri::menu::{CheckMenuItemBuilder, MenuBuilder, MenuItemBuilder, PredefinedMenuItem};
 use tauri::tray::TrayIconBuilder;
 use tauri::{AppHandle, Emitter, Manager};
+use tauri_plugin_autostart::ManagerExt;
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutState};
 use winapi::shared::windef::POINT;
 use winapi::um::winuser::{
@@ -165,7 +166,27 @@ fn get_settings(app: AppHandle) -> settings::Settings {
 /// Tauri command: Save settings.
 #[tauri::command]
 fn save_settings(app: AppHandle, new_settings: settings::Settings) {
+    let old_settings = settings::load(&app);
     settings::save(&app, &new_settings);
+
+    // Sync autostart with OS if setting changed
+    if old_settings.auto_start != new_settings.auto_start {
+        sync_autostart(&app, new_settings.auto_start);
+    }
+}
+
+/// Enable or disable OS-level autostart registration.
+fn sync_autostart(app: &AppHandle, enable: bool) {
+    let manager = app.autolaunch();
+    if enable {
+        if let Err(e) = manager.enable() {
+            eprintln!("Failed to enable autostart: {e}");
+        }
+    } else {
+        if let Err(e) = manager.disable() {
+            eprintln!("Failed to disable autostart: {e}");
+        }
+    }
 }
 
 fn setup_tray(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
@@ -204,6 +225,7 @@ fn setup_tray(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
                 let mut s = settings::load(app);
                 s.auto_start = !s.auto_start;
                 settings::save(app, &s);
+                sync_autostart(app, s.auto_start);
             }
             "auto_paste" => {
                 let mut s = settings::load(app);
@@ -252,6 +274,10 @@ pub fn run() {
                 Code::KeyF,
             );
             app.global_shortcut().register(shortcut)?;
+
+            // Sync autostart OS state with saved settings on launch
+            let s = settings::load(app.handle());
+            sync_autostart(app.handle(), s.auto_start);
 
             // Setup system tray
             setup_tray(app)?;

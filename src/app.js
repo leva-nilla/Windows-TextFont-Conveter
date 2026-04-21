@@ -21,6 +21,8 @@
     const settingAutoPaste = document.getElementById('setting-auto-paste');
     const settingPreserveClipboard = document.getElementById('setting-preserve-clipboard');
     const settingAutoStart = document.getElementById('setting-auto-start');
+    const settingNotificationOnCopy = document.getElementById('setting-notification-on-copy');
+    const settingCompactMode = document.getElementById('setting-compact-mode');
 
     // --- Category labels ---
     const categoryLabels = {
@@ -81,10 +83,14 @@
             settingsPanel.classList.add('hidden');
         });
 
-        // Settings toggles
         settingAutoPaste.addEventListener('change', saveCurrentSettings);
         settingPreserveClipboard.addEventListener('change', saveCurrentSettings);
         settingAutoStart.addEventListener('change', saveCurrentSettings);
+        settingNotificationOnCopy.addEventListener('change', saveCurrentSettings);
+        settingCompactMode.addEventListener('change', () => {
+            applyCompactMode(settingCompactMode.checked);
+            saveCurrentSettings();
+        });
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -106,6 +112,9 @@
             settingAutoPaste.checked = currentSettings.auto_paste;
             settingPreserveClipboard.checked = currentSettings.preserve_clipboard;
             settingAutoStart.checked = currentSettings.auto_start;
+            settingNotificationOnCopy.checked = currentSettings.notification_on_copy;
+            settingCompactMode.checked = currentSettings.compact_mode;
+            applyCompactMode(currentSettings.compact_mode);
         } catch (err) {
             console.error('Failed to load settings:', err);
         }
@@ -116,6 +125,8 @@
         currentSettings.auto_paste = settingAutoPaste.checked;
         currentSettings.preserve_clipboard = settingPreserveClipboard.checked;
         currentSettings.auto_start = settingAutoStart.checked;
+        currentSettings.notification_on_copy = settingNotificationOnCopy.checked;
+        currentSettings.compact_mode = settingCompactMode.checked;
         try {
             await invoke('save_settings', { newSettings: currentSettings });
         } catch (err) {
@@ -144,8 +155,14 @@
 
     // --- Copy Feedback Animation ---
     function showCopyFeedback(card) {
+        if (currentSettings && !currentSettings.notification_on_copy) return;
         card.classList.add('copied');
         setTimeout(() => card.classList.remove('copied'), 500);
+    }
+
+    // --- Compact Mode ---
+    function applyCompactMode(enabled) {
+        document.getElementById('font-grid').classList.toggle('compact', enabled);
     }
 
     // --- Render Font Grid ---

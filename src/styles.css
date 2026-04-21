@@ -468,3 +468,37 @@ html, body {
     left: 21px;
     background: #fff;
 }
+
+/* --- Compact Mode --- */
+.font-grid.compact {
+    gap: 2px;
+}
+
+.font-grid.compact .font-card {
+    padding: 4px 10px;
+    min-height: 32px;
+    gap: 6px;
+}
+
+.font-grid.compact .font-card-label {
+    width: 85px;
+    font-size: 8px;
+}
+
+.font-grid.compact .font-card-label .label-ja {
+    font-size: 8px;
+}
+
+.font-grid.compact .font-card-preview {
+    font-size: 12px;
+}
+
+.font-grid.compact .category-label {
+    padding: 4px 10px 1px;
+    font-size: 8px;
+}
+
+/* --- Settings Section Separator --- */
+.settings-body .setting-item + .setting-item {
+    /* subtle visual grouping */
+}

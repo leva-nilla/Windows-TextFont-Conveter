@@ -9,6 +9,14 @@ pub struct Settings {
     pub preserve_clipboard: bool,
     pub popup_at_cursor: bool,
     pub shortcut: String,
+    #[serde(default = "default_true")]
+    pub notification_on_copy: bool,
+    #[serde(default)]
+    pub compact_mode: bool,
+}
+
+fn default_true() -> bool {
+    true
 }
 
 impl Default for Settings {
@@ -19,6 +27,8 @@ impl Default for Settings {
             preserve_clipboard: false,
             popup_at_cursor: true,
             shortcut: "Ctrl+Shift+F".to_string(),
+            notification_on_copy: true,
+            compact_mode: false,
         }
     }
 }
