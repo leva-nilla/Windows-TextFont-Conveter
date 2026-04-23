@@ -504,15 +504,16 @@ function convertText(text, style) {
                 let si = 0;
                 const next = () => suits[si++ % 4];
                 const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
+                let t2 = text.replace(/僕/g, 'ボク');
                 let result;
                 if (isJa) {
-                    result = text
+                    result = t2
                         .replace(/。/g, () => next())
                         .replace(/、/g, () => next())
                         .replace(/！/g, () => '！' + next())
                         .replace(/？/g, () => '？' + next());
                 } else {
-                    result = text
+                    result = t2
                         .replace(/\./g, () => '.' + next())
                         .replace(/,/g, () => ',' + next())
                         .replace(/!/g, () => '!' + next())
@@ -527,203 +528,292 @@ function convertText(text, style) {
                 let si = 0;
                 const next = () => '～' + suits[si++ % 4];
                 const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
+                let t2 = text.replace(/僕/g, 'ボク');
                 let result;
                 if (isJa) {
-                    result = text
+                    result = t2
                         .replace(/。/g, () => next())
                         .replace(/、/g, () => next())
                         .replace(/！/g, () => '！' + next())
                         .replace(/？/g, () => '？' + next());
                 } else {
-                    result = text
+                    result = t2
                         .replace(/\./g, () => '.' + next())
                         .replace(/,/g, () => ',' + next())
                         .replace(/!/g, () => '!' + next())
                         .replace(/\?/g, () => '?' + next());
                 }
                 if (si === 0) result += next();
-                return result;
+                const pre = ['フフ…', 'ねぇ…', ''][text.length % 3];
+                return pre + result;
             }
             case 'hisokaFace':
-                return '⭐' + text + '💧';
+                return '⭐' + text.replace(/僕/g, 'ボク') + '💧';
             case 'mesugakiHeart': {
-                // メスガキ♡: 語尾を自動検出→小悪魔口調に変換、句読点→♡
+                // メスガキ♡: 文ごとに小悪魔口調に変換
                 const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
-                let result;
-                if (isJa) {
-                    result = text
-                        .replace(/です。/g, 'ですぅ♡')
-                        .replace(/です$/g, 'ですぅ♡')
-                        .replace(/ます。/g, 'ますぅ♡')
-                        .replace(/ます$/g, 'ますぅ♡')
-                        .replace(/ました。/g, 'ましたぁ♡')
-                        .replace(/ました$/g, 'ましたぁ♡')
-                        .replace(/ません。/g, 'ませんけどぉ♡')
-                        .replace(/ません$/g, 'ませんけどぉ♡')
-                        .replace(/だ。/g, 'だもん♡')
-                        .replace(/だ$/g, 'だもん♡')
-                        .replace(/よ。/g, 'よぉ♡')
-                        .replace(/よ$/g, 'よぉ♡')
-                        .replace(/ね。/g, 'ね♡')
-                        .replace(/。/g, '♡')
-                        .replace(/、/g, '♡');
-                    if (!result.endsWith('♡')) result += '♡';
-                    result += ' ざぁこ♡';
-                } else {
-                    result = text.replace(/\./g, '♡').replace(/,/g, '♡');
-                    if (!result.endsWith('♡')) result += '♡';
-                    result += ' zako♡';
+                if (!isJa) {
+                    let r = text.replace(/\.+/g, '♡').replace(/,+/g, '♡');
+                    if (!r.endsWith('♡')) r += '♡';
+                    const s = [' zako♡', ' so weak♡', '♡'][text.length % 3];
+                    return r + s;
                 }
-                return result;
+                const sentences = text.split(/(?<=。)/);
+                const out = sentences.map(s => {
+                    let r = s.replace(/。$/, '');
+                    if (!r) return '';
+                    let matched = false;
+                    r = r
+                        .replace(/ですか$/, () => { matched = true; return 'ですかぁ～？♡'; })
+                        .replace(/ません$/, () => { matched = true; return 'ませんけどぉ～♡'; })
+                        .replace(/ました$/, () => { matched = true; return 'ましたぁ～♡'; })
+                        .replace(/です$/, () => { matched = true; return 'ですぅ～♡'; })
+                        .replace(/します$/, () => { matched = true; return 'しますぅ～♡'; })
+                        .replace(/ます$/, () => { matched = true; return 'ますぅ～♡'; })
+                        .replace(/だよ$/, () => { matched = true; return 'だもんね～♡'; })
+                        .replace(/だ$/, () => { matched = true; return 'だもん♡'; })
+                        .replace(/よ$/, () => { matched = true; return 'よぉ～♡'; })
+                        .replace(/ね$/, () => { matched = true; return 'ね～♡'; })
+                        .replace(/わ$/, () => { matched = true; return 'わぁ～♡'; })
+                        .replace(/やん$/, () => { matched = true; return 'やんね～♡'; });
+                    r = r.replace(/、/g, '～♡');
+                    if (!matched) r += '♡';
+                    return r;
+                }).filter(Boolean);
+                const pre = ['', 'えへへ♡ ', 'ふふっ♡ ', 'ねぇ♡ ', 'あのね♡ '][text.length % 5];
+                const suf = [' ざぁこ♡', ' よわよわ～♡', ' かわいそ～♡', ' ちょろ～い♡', '♡'][text.length % 5];
+                return pre + out.join(' ') + suf;
             }
             case 'mesugakiTaunt': {
-                // メスガキ全力煽り: ねぇ♡で始まり、語尾を徹底的に煽り変換
+                // メスガキ全力煽り: 文ごとに煽り変換
                 const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
-                let result;
-                if (isJa) {
-                    result = text
-                        .replace(/です。/g, 'ですけどぉ？♡')
-                        .replace(/です$/g, 'ですけどぉ？♡')
-                        .replace(/ます。/g, 'ますけどぉ？♡')
-                        .replace(/ます$/g, 'ますけどぉ？♡')
-                        .replace(/ました。/g, 'ましたけどぉ？♡')
-                        .replace(/ました$/g, 'ましたけどぉ？♡')
-                        .replace(/だ。/g, 'だけどぉ？♡💢')
-                        .replace(/だ$/g, 'だけどぉ？♡💢')
-                        .replace(/ない。/g, 'ないんですけどぉ♡')
-                        .replace(/ない$/g, 'ないんですけどぉ♡')
-                        .replace(/。/g, '♡💢')
-                        .replace(/、/g, '♡');
-                    result = 'ねぇねぇ♡ ' + result;
-                    if (!result.endsWith('♡') && !result.endsWith('💢')) result += '♡💢';
-                    result += ' ざぁこざぁこ♡';
-                } else {
-                    result = text.replace(/\./g, '♡💢').replace(/,/g, '♡');
-                    result = 'hey♡ ' + result;
-                    if (!result.endsWith('♡') && !result.endsWith('💢')) result += '♡💢';
-                    result += ' zako zako♡';
+                if (!isJa) {
+                    let r = text.replace(/\.+/g, '♡💢').replace(/,+/g, '♡');
+                    if (!r.endsWith('♡') && !r.endsWith('💢')) r += '♡💢';
+                    const p = ['hey♡ ', 'haha♡ ', 'aww♡ '][text.length % 3];
+                    const s = [' zako zako♡', ' pathetic♡💢', ' so lame♡'][text.length % 3];
+                    return p + r + s;
                 }
-                return result;
+                const mesuEnd = ['ですけどぉ～？♡', 'なんですけどぉ～♡💢', 'ですけど？♡💢'];
+                let mi = 0;
+                const sentences = text.split(/(?<=。)/);
+                const out = sentences.map(s => {
+                    let r = s.replace(/。$/, '');
+                    if (!r) return '';
+                    let matched = false;
+                    r = r
+                        .replace(/ですか$/, () => { matched = true; return 'ですかぁ～？♡💢'; })
+                        .replace(/ません$/, () => { matched = true; return 'ませんけどぉ～？♡'; })
+                        .replace(/ました$/, () => { matched = true; return 'ましたけどぉ～？♡💢'; })
+                        .replace(/です$/, () => { matched = true; return mesuEnd[mi++ % 3]; })
+                        .replace(/します$/, () => { matched = true; return 'しますけどぉ～？♡'; })
+                        .replace(/ます$/, () => { matched = true; return 'ますけどぉ～？♡'; })
+                        .replace(/ない$/, () => { matched = true; return 'ないんですけどぉ～♡💢'; })
+                        .replace(/だよ$/, () => { matched = true; return 'だけどぉ～？♡💢'; })
+                        .replace(/だ$/, () => { matched = true; return 'だけどぉ～？♡💢'; })
+                        .replace(/よ$/, () => { matched = true; return 'よぉ～？♡💢'; })
+                        .replace(/ね$/, () => { matched = true; return 'ねぇ～？♡💢'; })
+                        .replace(/わ$/, () => { matched = true; return 'わぁ～？♡💢'; })
+                        .replace(/やん$/, () => { matched = true; return 'やんねぇ～？♡💢'; });
+                    r = r.replace(/、/g, '～♡');
+                    if (!matched) r += '♡💢';
+                    return r;
+                }).filter(Boolean);
+                const pre = ['ねぇねぇ♡ ', 'おじさ～ん♡ ', 'ほらほら♡ ', 'え～？♡ ', 'あのさぁ♡ '][text.length % 5];
+                const suf = [' ざぁこざぁこ♡', ' よわよわ～♡💢', ' だっさ～♡💢', ' なさけな～い♡💢', ' かわいそ～♡'][text.length % 5];
+                return pre + out.join(' ') + suf;
             }
             case 'jojoMenacing': {
-                // ジョジョ風: 句読点→「ゴゴゴ」、語尾に「ッ！」、力強い口調
+                // ジョジョ風: 文ごとに力強く変換、丁寧語→常体
                 const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
-                let result;
-                if (isJa) {
-                    result = text
-                        .replace(/です。/g, 'だッ！')
-                        .replace(/です$/g, 'だッ！')
-                        .replace(/ます。/g, 'るッ！')
-                        .replace(/ます$/g, 'るッ！')
-                        .replace(/ました。/g, 'たッ！')
-                        .replace(/ました$/g, 'たッ！')
-                        .replace(/だ。/g, 'だッ！')
-                        .replace(/だ$/g, 'だッ！')
-                        .replace(/。/g, 'ッ！')
-                        .replace(/、/g, '…');
-                    if (!result.endsWith('！')) result += 'ッ！';
-                    result = '「' + result + '」 ゴゴゴゴゴ';
-                } else {
-                    result = text
-                        .replace(/\./g, '!!')
-                        .replace(/,/g, '...');
-                    if (!result.endsWith('!')) result += '!!';
-                    result = result + ' *menacing*';
+                if (!isJa) {
+                    let r = text.replace(/\./g, '!!').replace(/,/g, '...');
+                    if (!r.endsWith('!')) r += '!!';
+                    return r + ' *menacing*';
                 }
-                return result;
+                const sentences = text.split(/(?<=。)/);
+                const out = sentences.map(s => {
+                    let r = s.replace(/。$/, '');
+                    if (!r) return '';
+                    // 長いパターンから先に置換
+                    r = r
+                        .replace(/いですか$/, 'いだと？')
+                        .replace(/ですか$/, 'かだと？')
+                        .replace(/ますか$/, 'のか？')
+                        .replace(/ません$/, 'ねぇッ')
+                        .replace(/いました$/, 'いたッ')
+                        .replace(/しました$/, 'したッ')
+                        .replace(/りました$/, 'ったッ')
+                        .replace(/きました$/, 'いたッ')
+                        .replace(/ぎました$/, 'いだッ')
+                        .replace(/びました$/, 'んだッ')
+                        .replace(/みました$/, 'んだッ')
+                        .replace(/にました$/, 'んだッ')
+                        .replace(/ちました$/, 'ったッ')
+                        .replace(/べました$/, 'べたッ')
+                        .replace(/ました$/, 'たッ')
+                        .replace(/いです$/, 'いッ')
+                        .replace(/です$/, 'だッ')
+                        .replace(/します$/, 'するッ')
+                        .replace(/きます$/, 'くッ')
+                        .replace(/ぎます$/, 'ぐッ')
+                        .replace(/びます$/, 'ぶッ')
+                        .replace(/みます$/, 'むッ')
+                        .replace(/ちます$/, 'つッ')
+                        .replace(/にます$/, 'ぬッ')
+                        .replace(/ります$/, 'るッ')
+                        .replace(/います$/, 'うッ')
+                        .replace(/べます$/, 'べるッ')
+                        .replace(/えます$/, 'えるッ')
+                        .replace(/ます$/, 'るッ');
+                    r = r.replace(/、/g, '…') + '！';
+                    return r;
+                }).filter(Boolean);
+                const sfx = ['ゴゴゴゴゴ', 'ドドドドド', 'ゴゴゴゴゴ'][text.length % 3];
+                return '「' + out.join(' ') + '」 ' + sfx;
             }
             case 'tsundere': {
-                // ツンデレ風: 否定+照れ隠しの語尾変換
+                // ツンデレ風: 文ごとに照れ隠し変換
                 const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
-                let result;
-                if (isJa) {
-                    result = text
-                        .replace(/です。/g, '…なんだからね！')
-                        .replace(/です$/g, '…なんだからね！')
-                        .replace(/ます。/g, '…してあげただけなんだから！')
-                        .replace(/ます$/g, '…してあげただけなんだから！')
-                        .replace(/だ。/g, '…なんかじゃないし！')
-                        .replace(/だ$/g, '…なんかじゃないし！')
-                        .replace(/よ。/g, '…なんだからね！///')
-                        .replace(/よ$/g, '…なんだからね！///')
-                        .replace(/。/g, '！')
-                        .replace(/、/g, '…');
-                    result = 'べっ、別に' + result;
-                } else {
-                    result = text.replace(/\./g, '!').replace(/,/g, '...');
-                    result = "I-It's not like " + result + ' ...or anything!';
+                if (!isJa) {
+                    let r = text.replace(/\./g, '!').replace(/,/g, '...');
+                    return "I-It's not like " + r + ' ...or anything!';
                 }
-                return result;
+                const tsunEndings = ['…なんだからね！', '…じゃないんだから！', '…なんだからっ！', '…とか思ってないし！'];
+                let ti = 0;
+                const sentences = text.split(/(?<=。)/);
+                const out = sentences.map(s => {
+                    let r = s.replace(/。$/, '');
+                    if (!r) return '';
+                    let matched = false;
+                    r = r
+                        .replace(/ですか$/, () => { matched = true; return '…かなんて聞かないでよ！'; })
+                        .replace(/ません$/, () => { matched = true; return 'ないんだからね！'; })
+                        .replace(/しました$/, () => { matched = true; return 'しただけだし！'; })
+                        .replace(/ました$/, () => { matched = true; return 'ましたけど…別に！'; })
+                        .replace(/です$/, () => { matched = true; return tsunEndings[ti++ % 3]; })
+                        .replace(/します$/, () => { matched = true; return 'するだけだし！'; })
+                        .replace(/ます$/, () => { matched = true; return 'ますけど…別に！'; })
+                        .replace(/だよ$/, () => { matched = true; return '…なんだからね！///'; })
+                        .replace(/だ$/, () => { matched = true; return '…なんかじゃないし！'; })
+                        .replace(/よ$/, () => { matched = true; return '…んだからね！///'; })
+                        .replace(/ね$/, () => { matched = true; return '…なんだからっ！'; })
+                        .replace(/わ$/, () => { matched = true; return '…だし！'; })
+                        .replace(/やん$/, () => { matched = true; return '…なんかじゃないし！'; });
+                    r = r.replace(/、/g, '…');
+                    if (!matched) r += tsunEndings[ti++ % 3];
+                    return r;
+                }).filter(Boolean);
+                const tp = ['べっ、別に…', 'か、勘違いしないでよね！ ', 'バカ！ '][text.length % 3];
+                return tp + out.join(' ');
             }
             case 'yandere': {
-                // ヤンデレ風: 優しいけど病的、♡多用、「…」多用
+                // ヤンデレ風: 文ごとに甘く病的に変換
                 const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
-                let result;
-                if (isJa) {
-                    result = text
-                        .replace(/です。/g, '…だよ♡')
-                        .replace(/です$/g, '…だよ♡')
-                        .replace(/ます。/g, '…ちゃうの♡')
-                        .replace(/ます$/g, '…ちゃうの♡')
-                        .replace(/だ。/g, '…なの♡')
-                        .replace(/だ$/g, '…なの♡')
-                        .replace(/ね。/g, '…ねぇ？♡')
-                        .replace(/ね$/g, '…ねぇ？♡')
-                        .replace(/。/g, '…')
-                        .replace(/、/g, '…');
-                    if (!result.endsWith('♡')) result += '…♡';
-                    result += ' ねぇ、ずっと一緒だよ♡';
-                } else {
-                    result = text.replace(/\./g, '...').replace(/,/g, '...');
-                    result += '... I love you♡ forever and ever♡';
+                if (!isJa) {
+                    let r = text.replace(/\./g, '...♡').replace(/,/g, '...');
+                    if (!r.endsWith('♡')) r += '...♡';
+                    return r;
                 }
-                return result;
+                const yanEndings = ['…だよ♡', '…なの♡', '…ね♡', '…よね？♡'];
+                let yi = 0;
+                const sentences = text.split(/(?<=。)/);
+                const out = sentences.map(s => {
+                    let r = s.replace(/。$/, '');
+                    if (!r) return '';
+                    let matched = false;
+                    r = r
+                        .replace(/ですか$/, () => { matched = true; return '…かなぁ♡'; })
+                        .replace(/ません$/, () => { matched = true; return 'ないよ♡'; })
+                        .replace(/しました$/, () => { matched = true; return 'しちゃった♡'; })
+                        .replace(/ました$/, () => { matched = true; return 'ましたの♡'; })
+                        .replace(/です$/, () => { matched = true; return yanEndings[yi++ % 3]; })
+                        .replace(/します$/, () => { matched = true; return 'しちゃうの♡'; })
+                        .replace(/ます$/, () => { matched = true; return 'ますよ♡'; })
+                        .replace(/だよ$/, () => { matched = true; return '…だよぉ♡'; })
+                        .replace(/だ$/, () => { matched = true; return '…なの♡'; })
+                        .replace(/よ$/, () => { matched = true; return '…よぉ♡'; })
+                        .replace(/ね$/, () => { matched = true; return '…ねぇ♡'; })
+                        .replace(/わ$/, () => { matched = true; return '…わぁ♡'; })
+                        .replace(/やん$/, () => { matched = true; return '…やん♡'; });
+                    r = r.replace(/、/g, '…');
+                    if (!matched) r += yanEndings[yi++ % 3];
+                    return r;
+                }).filter(Boolean);
+                const yp = ['', 'ねぇ…', ''][text.length % 3];
+                const ys = [' ずっと一緒だよ…♡', '', ' 離さないから♡', ' 私だけのものだよ…♡'][text.length % 4];
+                return yp + out.join(' ') + ys;
             }
             case 'gyaru': {
-                // ギャル風: 語尾変換、絵文字多用、テンション高め
+                // ギャル風: 文ごとにテンション高く変換
                 const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
-                let result;
-                if (isJa) {
-                    result = text
-                        .replace(/です。/g, 'じゃん✨')
-                        .replace(/です$/g, 'じゃん✨')
-                        .replace(/ます。/g, 'じゃん✨')
-                        .replace(/ます$/g, 'じゃん✨')
-                        .replace(/ない。/g, 'なくない？🤔')
-                        .replace(/ない$/g, 'なくない？🤔')
-                        .replace(/だ。/g, 'っしょ！💅')
-                        .replace(/だ$/g, 'っしょ！💅')
-                        .replace(/よ。/g, 'よ～✨')
-                        .replace(/よ$/g, 'よ～✨')
-                        .replace(/。/g, '～✨')
-                        .replace(/、/g, '～');
-                    result += ' 🤙✨';
-                } else {
-                    result = text.replace(/\./g, '~✨').replace(/,/g, '~');
-                    result += ' 🤙✨ vibes';
+                if (!isJa) {
+                    let r = text.replace(/\./g, '~✨').replace(/,/g, '~ ');
+                    if (!r.endsWith('✨')) r += '~✨';
+                    return r + ' 🤙';
                 }
-                return result;
+                const gyaruEnd = ['じゃん✨', 'ってかんじ～💅', 'まじで～✨', 'やばくない？🤙', 'ガチだわ✨'];
+                let gi = 0;
+                const sentences = text.split(/(?<=。)/);
+                const out = sentences.map(s => {
+                    let r = s.replace(/。$/, '');
+                    if (!r) return '';
+                    let matched = false;
+                    r = r
+                        .replace(/ですか$/, () => { matched = true; return 'なの～？✨'; })
+                        .replace(/ません$/, () => { matched = true; return 'なくない？🤔'; })
+                        .replace(/しました$/, () => { matched = true; return 'したんだけど～✨'; })
+                        .replace(/ました$/, () => { matched = true; return 'ましたってかんじ～💅'; })
+                        .replace(/です$/, () => { matched = true; return gyaruEnd[gi++ % 4]; })
+                        .replace(/します$/, () => { matched = true; return 'するっしょ✨'; })
+                        .replace(/ます$/, () => { matched = true; return 'ますってかんじ✨'; })
+                        .replace(/ない$/, () => { matched = true; return 'なくない？🤔'; })
+                        .replace(/だよ$/, () => { matched = true; return 'っしょ！💅'; })
+                        .replace(/だ$/, () => { matched = true; return 'っしょ💅'; })
+                        .replace(/よ$/, () => { matched = true; return 'よ～✨'; })
+                        .replace(/ね$/, () => { matched = true; return 'ね～✨'; })
+                        .replace(/わ$/, () => { matched = true; return 'わ～✨'; })
+                        .replace(/やん$/, () => { matched = true; return 'やん～🤙'; });
+                    r = r.replace(/、/g, '～');
+                    if (!matched) r += '～' + gyaruEnd[gi++ % 4];
+                    return r;
+                }).filter(Boolean);
+                const gp = ['', 'てか～ ', 'マジ卍 '][text.length % 3];
+                return gp + out.join(' ') + ' 🤙✨';
             }
             case 'chuuni': {
-                // 厄二病風: 大仐な口調、ダッシュ多用、中二病的言い回し
+                // 厨二病風: 文ごとに大仰に変換
                 const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
-                let result;
-                if (isJa) {
-                    result = text
-                        .replace(/です。/g, '…それが我が運命だ')
-                        .replace(/です$/g, '…それが我が運命だ')
-                        .replace(/ます。/g, '…それが世界の理だ')
-                        .replace(/ます$/g, '…それが世界の理だ')
-                        .replace(/だ。/g, '…ッ')
-                        .replace(/だ$/g, '…ッ')
-                        .replace(/。/g, '──')
-                        .replace(/、/g, '…');
-                    result = '──くっ…' + result + '…この力が暴走する…！';
-                } else {
-                    result = text.replace(/\./g, '--').replace(/,/g, '...');
-                    result = 'Tch... ' + result + '...this power is overflowing...!';
+                if (!isJa) {
+                    let r = text.replace(/\./g, '--').replace(/,/g, '...');
+                    return 'Tch... ' + r + '...!';
                 }
-                return result;
+                const chuuniEnd = ['──', '…ッ', '…！', '…フッ'];
+                let ci = 0;
+                const sentences = text.split(/(?<=。)/);
+                const out = sentences.map(s => {
+                    let r = s.replace(/。$/, '');
+                    if (!r) return '';
+                    let matched = false;
+                    r = r
+                        .replace(/ですか$/, () => { matched = true; return '…だと？ フッ…'; })
+                        .replace(/ません$/, () => { matched = true; return '…ぬッ'; })
+                        .replace(/しました$/, () => { matched = true; return '…した…それが運命だった'; })
+                        .replace(/ました$/, () => { matched = true; return 'ました…それが運命だった'; })
+                        .replace(/です$/, () => { matched = true; return '…それが定めだ'; })
+                        .replace(/します$/, () => { matched = true; return 'する…それが世界の理'; })
+                        .replace(/ます$/, () => { matched = true; return 'ます…それが世界の理'; })
+                        .replace(/だ$/, () => { matched = true; return '…ッ'; })
+                        .replace(/よ$/, () => { matched = true; return '…！'; })
+                        .replace(/ね$/, () => { matched = true; return '…ッ'; })
+                        .replace(/わ$/, () => { matched = true; return '…ッ'; })
+                        .replace(/やん$/, () => { matched = true; return '…だとッ！？'; });
+                    r = r.replace(/、/g, '…');
+                    if (!matched) r += chuuniEnd[ci++ % 3];
+                    return r;
+                }).filter(Boolean);
+                const cp = ['くっ…', 'フッ…笑止…', '我が封印されし力が…'][text.length % 3];
+                return cp + out.join('──') + '…！';
             }
             default:
                 return text;
