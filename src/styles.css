@@ -156,6 +156,44 @@ html, body {
     box-shadow: 0 0 0 2px var(--accent-glow);
 }
 
+/* --- Search Bar --- */
+.search-wrapper {
+    position: relative;
+    margin-top: 6px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+#search-text {
+    width: 100%;
+    padding: 5px 10px 5px 28px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    outline: none;
+    transition: border-color var(--transition-fast);
+}
+
+#search-text::placeholder {
+    color: var(--text-muted);
+}
+
+#search-text:focus {
+    border-color: var(--border-hover);
+    box-shadow: 0 0 0 1px var(--accent-glow);
+}
+
 /* --- Font Grid --- */
 .font-grid {
     flex: 1;
@@ -235,13 +273,39 @@ html, body {
 
 .font-card-label {
     flex-shrink: 0;
-    width: 110px;
+    width: 120px;
     font-size: 10px;
     font-weight: 500;
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     line-height: 1.3;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px;
+}
+
+.fav-star {
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--text-muted);
+    transition: color var(--transition-fast), transform var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.fav-star:hover {
+    transform: scale(1.3);
+}
+
+.is-favorite .fav-star {
+    color: #f59e0b;
+    text-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+}
+
+.category-label-fav {
+    color: #f59e0b !important;
+    border-bottom-color: rgba(245, 158, 11, 0.2) !important;
 }
 
 .font-card-label .label-ja {
@@ -558,4 +622,139 @@ html, body {
 
 .update-banner:hover .update-banner-action {
     background: rgba(34, 197, 94, 0.3);
+}
+
+/* ============================================
+   History Panel
+   ============================================ */
+.history-panel {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.15s ease-out;
+}
+
+.history-panel.hidden {
+    display: none;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.history-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.history-list {
+    overflow-y: auto;
+    padding: 4px;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.history-item:hover {
+    background: var(--bg-card-hover);
+}
+
+.history-item-label {
+    flex-shrink: 0;
+    width: 70px;
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.history-item-preview {
+    flex: 1;
+    font-size: 12px;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* --- Status Bar Actions --- */
+.status-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-status {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 0 4px;
+    transition: color var(--transition-fast);
+}
+
+.btn-status:hover {
+    color: var(--text-primary);
+}
+
+/* --- Shortcut Input --- */
+.setting-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 4px 0;
+}
+
+.shortcut-input-wrapper {
+    flex-shrink: 0;
+}
+
+.shortcut-input {
+    width: 130px;
+    padding: 4px 8px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--accent-end);
+    font-family: 'Inter', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    outline: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.shortcut-input:focus {
+    border-color: var(--accent-start);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+    animation: shortcutPulse 1s ease-in-out infinite;
+}
+
+@keyframes shortcutPulse {
+    0%, 100% { box-shadow: 0 0 0 2px var(--accent-glow); }
+    50% { box-shadow: 0 0 0 4px var(--accent-glow); }
 }

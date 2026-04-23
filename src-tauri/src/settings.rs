@@ -3,6 +3,14 @@ use std::fs;
 use tauri::{AppHandle, Manager};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct HistoryEntry {
+    pub style_id: String,
+    pub input_text: String,
+    pub output_text: String,
+    pub timestamp: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Settings {
     pub auto_start: bool,
     pub auto_paste: bool,
@@ -13,6 +21,10 @@ pub struct Settings {
     pub notification_on_copy: bool,
     #[serde(default)]
     pub compact_mode: bool,
+    #[serde(default)]
+    pub favorites: Vec<String>,
+    #[serde(default)]
+    pub history: Vec<HistoryEntry>,
 }
 
 fn default_true() -> bool {
@@ -29,6 +41,8 @@ impl Default for Settings {
             shortcut: "Ctrl+Shift+F".to_string(),
             notification_on_copy: true,
             compact_mode: false,
+            favorites: Vec::new(),
+            history: Vec::new(),
         }
     }
 }

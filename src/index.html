@@ -20,6 +20,10 @@
             <div class="input-wrapper">
                 <textarea id="input-text" placeholder="テキストを入力..." rows="2" spellcheck="false"></textarea>
             </div>
+            <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input id="search-text" type="text" placeholder="スタイルを検索..." spellcheck="false">
+            </div>
         </div>
 
         <!-- Font style grid -->
@@ -37,7 +41,21 @@
         <!-- Status bar -->
         <div class="status-bar">
             <span class="status-hint">クリックでコピー＆貼り付け</span>
-            <span class="status-shortcut">Ctrl+Shift+F</span>
+            <div class="status-actions">
+                <button id="btn-history" class="btn-status" title="履歴">📋</button>
+                <span class="status-shortcut" id="status-shortcut-label">Ctrl+Shift+F</span>
+            </div>
+        </div>
+
+        <!-- History Panel -->
+        <div id="history-panel" class="history-panel hidden">
+            <div class="history-header">
+                <span class="history-title">📋 変換履歴</span>
+                <button id="btn-close-history" class="btn-icon" title="閉じる">✕</button>
+            </div>
+            <div id="history-list" class="history-list">
+                <div class="empty-state"><div>履歴はまだありません</div></div>
+            </div>
         </div>
 
         <!-- Settings Panel Overlay -->
@@ -95,6 +113,16 @@
                     <div class="toggle-switch">
                         <input type="checkbox" id="setting-compact-mode">
                         <span class="toggle-slider"></span>
+                    </div>
+                </label>
+                <div class="setting-divider"></div>
+                <label class="setting-item setting-item-shortcut">
+                    <div class="setting-info">
+                        <span class="setting-name">ショートカット</span>
+                        <span class="setting-desc">クリックでキーを入力</span>
+                    </div>
+                    <div class="shortcut-input-wrapper">
+                        <input id="setting-shortcut" type="text" class="shortcut-input" readonly placeholder="Ctrl+Shift+F">
                     </div>
                 </label>
             </div>

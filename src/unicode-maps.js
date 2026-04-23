@@ -448,6 +448,26 @@ const FONT_STYLES = [
         id: 'mesugakiTaunt', name: '💢ﾒｽｶﾞｷ💢', nameJa: 'メスガキ煽り', category: 'character',
         transform: 'mesugakiTaunt',
     },
+    {
+        id: 'jojoMenacing', name: 'ゴゴゴ JoJo ゴゴゴ', nameJa: 'ジョジョ風', category: 'character',
+        transform: 'jojoMenacing',
+    },
+    {
+        id: 'tsundere', name: '💢ツンデレ💢', nameJa: 'ツンデレ風', category: 'character',
+        transform: 'tsundere',
+    },
+    {
+        id: 'yandere', name: '🔪ヤンデレ♡', nameJa: 'ヤンデレ風', category: 'character',
+        transform: 'yandere',
+    },
+    {
+        id: 'gyaru', name: '✨ギャル🤙', nameJa: 'ギャル風', category: 'character',
+        transform: 'gyaru',
+    },
+    {
+        id: 'chuuni', name: '⚔厄二病⚔', nameJa: '厄二病風', category: 'character',
+        transform: 'chuuni',
+    },
 ];
 
 /**
@@ -582,6 +602,126 @@ function convertText(text, style) {
                     result = 'hey♡ ' + result;
                     if (!result.endsWith('♡') && !result.endsWith('💢')) result += '♡💢';
                     result += ' zako zako♡';
+                }
+                return result;
+            }
+            case 'jojoMenacing': {
+                // ジョジョ風: 句読点→「ゴゴゴ」、語尾に「ッ！」、力強い口調
+                const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
+                let result;
+                if (isJa) {
+                    result = text
+                        .replace(/です。/g, 'だッ！')
+                        .replace(/です$/g, 'だッ！')
+                        .replace(/ます。/g, 'るッ！')
+                        .replace(/ます$/g, 'るッ！')
+                        .replace(/ました。/g, 'たッ！')
+                        .replace(/ました$/g, 'たッ！')
+                        .replace(/だ。/g, 'だッ！')
+                        .replace(/だ$/g, 'だッ！')
+                        .replace(/。/g, 'ッ！')
+                        .replace(/、/g, '…');
+                    if (!result.endsWith('！')) result += 'ッ！';
+                    result = '「' + result + '」 ゴゴゴゴゴ';
+                } else {
+                    result = text
+                        .replace(/\./g, '!!')
+                        .replace(/,/g, '...');
+                    if (!result.endsWith('!')) result += '!!';
+                    result = result + ' *menacing*';
+                }
+                return result;
+            }
+            case 'tsundere': {
+                // ツンデレ風: 否定+照れ隠しの語尾変換
+                const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
+                let result;
+                if (isJa) {
+                    result = text
+                        .replace(/です。/g, '…なんだからね！')
+                        .replace(/です$/g, '…なんだからね！')
+                        .replace(/ます。/g, '…してあげただけなんだから！')
+                        .replace(/ます$/g, '…してあげただけなんだから！')
+                        .replace(/だ。/g, '…なんかじゃないし！')
+                        .replace(/だ$/g, '…なんかじゃないし！')
+                        .replace(/よ。/g, '…なんだからね！///')
+                        .replace(/よ$/g, '…なんだからね！///')
+                        .replace(/。/g, '！')
+                        .replace(/、/g, '…');
+                    result = 'べっ、別に' + result;
+                } else {
+                    result = text.replace(/\./g, '!').replace(/,/g, '...');
+                    result = "I-It's not like " + result + ' ...or anything!';
+                }
+                return result;
+            }
+            case 'yandere': {
+                // ヤンデレ風: 優しいけど病的、♡多用、「…」多用
+                const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
+                let result;
+                if (isJa) {
+                    result = text
+                        .replace(/です。/g, '…だよ♡')
+                        .replace(/です$/g, '…だよ♡')
+                        .replace(/ます。/g, '…ちゃうの♡')
+                        .replace(/ます$/g, '…ちゃうの♡')
+                        .replace(/だ。/g, '…なの♡')
+                        .replace(/だ$/g, '…なの♡')
+                        .replace(/ね。/g, '…ねぇ？♡')
+                        .replace(/ね$/g, '…ねぇ？♡')
+                        .replace(/。/g, '…')
+                        .replace(/、/g, '…');
+                    if (!result.endsWith('♡')) result += '…♡';
+                    result += ' ねぇ、ずっと一緒だよ♡';
+                } else {
+                    result = text.replace(/\./g, '...').replace(/,/g, '...');
+                    result += '... I love you♡ forever and ever♡';
+                }
+                return result;
+            }
+            case 'gyaru': {
+                // ギャル風: 語尾変換、絵文字多用、テンション高め
+                const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
+                let result;
+                if (isJa) {
+                    result = text
+                        .replace(/です。/g, 'じゃん✨')
+                        .replace(/です$/g, 'じゃん✨')
+                        .replace(/ます。/g, 'じゃん✨')
+                        .replace(/ます$/g, 'じゃん✨')
+                        .replace(/ない。/g, 'なくない？🤔')
+                        .replace(/ない$/g, 'なくない？🤔')
+                        .replace(/だ。/g, 'っしょ！💅')
+                        .replace(/だ$/g, 'っしょ！💅')
+                        .replace(/よ。/g, 'よ～✨')
+                        .replace(/よ$/g, 'よ～✨')
+                        .replace(/。/g, '～✨')
+                        .replace(/、/g, '～');
+                    result += ' 🤙✨';
+                } else {
+                    result = text.replace(/\./g, '~✨').replace(/,/g, '~');
+                    result += ' 🤙✨ vibes';
+                }
+                return result;
+            }
+            case 'chuuni': {
+                // 厄二病風: 大仐な口調、ダッシュ多用、中二病的言い回し
+                const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
+                let result;
+                if (isJa) {
+                    result = text
+                        .replace(/です。/g, '…それが我が運命だ')
+                        .replace(/です$/g, '…それが我が運命だ')
+                        .replace(/ます。/g, '…それが世界の理だ')
+                        .replace(/ます$/g, '…それが世界の理だ')
+                        .replace(/だ。/g, '…ッ')
+                        .replace(/だ$/g, '…ッ')
+                        .replace(/。/g, '──')
+                        .replace(/、/g, '…');
+                    result = '──くっ…' + result + '…この力が暴走する…！';
+                } else {
+                    result = text.replace(/\./g, '--').replace(/,/g, '...');
+                    result = 'Tch... ' + result + '...this power is overflowing...!';
                 }
                 return result;
             }
