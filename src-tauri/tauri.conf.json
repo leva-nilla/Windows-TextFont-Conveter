@@ -1,6 +1,6 @@
 {
   "productName": "FontConverter",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "identifier": "com.fontconverter.app",
   "build": {
     "frontendDist": "../src"
@@ -34,9 +34,19 @@
       "icons/128x128@2x.png",
       "icons/icon.ico",
       "icons/icon.png"
-    ]
+    ],
+    "createUpdaterArtifacts": true
   },
   "plugins": {
-    "global-shortcut": null
+    "global-shortcut": null,
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEJBRjY2RUMxRUI3OTQ5QTAKUldTZ1NYbnJ3VzcydWx4OVNYcXNvc3pPaTUzZFdlTGdGZUN0L2RYanZOYmxHMG8rWlVTUkhpU1QK",
+      "endpoints": [
+        "https://github.com/leva-nilla/Windows-TextFont-Conveter/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
+    }
   }
 }

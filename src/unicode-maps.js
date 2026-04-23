@@ -427,6 +427,27 @@ const FONT_STYLES = [
         id: 'dakuten', name: 'Dakuten', nameJa: '濁点付き', category: 'japanese',
         combiningChar: '\u3099',
     },
+    // ===== Character Styles (5) =====
+    {
+        id: 'hisokaClassic', name: '♠ Hisoka ♥', nameJa: 'ヒソカ風', category: 'character',
+        transform: 'hisokaClassic',
+    },
+    {
+        id: 'hisokaSexy', name: '♦ Hisoka～♥', nameJa: 'ヒソカ(妖艶)', category: 'character',
+        transform: 'hisokaSexy',
+    },
+    {
+        id: 'hisokaFace', name: '⭐ Hisoka ⭐', nameJa: 'ヒソカの顔', category: 'character',
+        transform: 'hisokaFace',
+    },
+    {
+        id: 'mesugakiHeart', name: '♡ざぁこ♡', nameJa: 'メスガキ♡', category: 'character',
+        transform: 'mesugakiHeart',
+    },
+    {
+        id: 'mesugakiTaunt', name: '💢ﾒｽｶﾞｷ💢', nameJa: 'メスガキ煽り', category: 'character',
+        transform: 'mesugakiTaunt',
+    },
 ];
 
 /**
@@ -455,6 +476,115 @@ function convertText(text, style) {
                 return [...text].map(ch => ch === ' ' ? ' ' : `[${ch}]`).join('');
             case 'dotsBetween':
                 return [...text].join('・');
+            // --- Character styles (Hisoka / Mesugaki) ---
+            // テキストの言語・構造を自動認識してキャラらしく変換
+            case 'hisokaClassic': {
+                // 原作再現: 句読点をトランプマークに置換（漫画の吹き出しと同じ演出）
+                const suits = ['♠', '♥', '♦', '♣'];
+                let si = 0;
+                const next = () => suits[si++ % 4];
+                const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
+                let result;
+                if (isJa) {
+                    result = text
+                        .replace(/。/g, () => next())
+                        .replace(/、/g, () => next())
+                        .replace(/！/g, () => '！' + next())
+                        .replace(/？/g, () => '？' + next());
+                } else {
+                    result = text
+                        .replace(/\./g, () => '.' + next())
+                        .replace(/,/g, () => ',' + next())
+                        .replace(/!/g, () => '!' + next())
+                        .replace(/\?/g, () => '?' + next());
+                }
+                if (si === 0) result += next();
+                return result;
+            }
+            case 'hisokaSexy': {
+                // 妖艶ヒソカ: ～で色っぽく伸ばしてからスート
+                const suits = ['♥', '♦', '♠', '♣'];
+                let si = 0;
+                const next = () => '～' + suits[si++ % 4];
+                const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
+                let result;
+                if (isJa) {
+                    result = text
+                        .replace(/。/g, () => next())
+                        .replace(/、/g, () => next())
+                        .replace(/！/g, () => '！' + next())
+                        .replace(/？/g, () => '？' + next());
+                } else {
+                    result = text
+                        .replace(/\./g, () => '.' + next())
+                        .replace(/,/g, () => ',' + next())
+                        .replace(/!/g, () => '!' + next())
+                        .replace(/\?/g, () => '?' + next());
+                }
+                if (si === 0) result += next();
+                return result;
+            }
+            case 'hisokaFace':
+                return '⭐' + text + '💧';
+            case 'mesugakiHeart': {
+                // メスガキ♡: 語尾を自動検出→小悪魔口調に変換、句読点→♡
+                const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
+                let result;
+                if (isJa) {
+                    result = text
+                        .replace(/です。/g, 'ですぅ♡')
+                        .replace(/です$/g, 'ですぅ♡')
+                        .replace(/ます。/g, 'ますぅ♡')
+                        .replace(/ます$/g, 'ますぅ♡')
+                        .replace(/ました。/g, 'ましたぁ♡')
+                        .replace(/ました$/g, 'ましたぁ♡')
+                        .replace(/ません。/g, 'ませんけどぉ♡')
+                        .replace(/ません$/g, 'ませんけどぉ♡')
+                        .replace(/だ。/g, 'だもん♡')
+                        .replace(/だ$/g, 'だもん♡')
+                        .replace(/よ。/g, 'よぉ♡')
+                        .replace(/よ$/g, 'よぉ♡')
+                        .replace(/ね。/g, 'ね♡')
+                        .replace(/。/g, '♡')
+                        .replace(/、/g, '♡');
+                    if (!result.endsWith('♡')) result += '♡';
+                    result += ' ざぁこ♡';
+                } else {
+                    result = text.replace(/\./g, '♡').replace(/,/g, '♡');
+                    if (!result.endsWith('♡')) result += '♡';
+                    result += ' zako♡';
+                }
+                return result;
+            }
+            case 'mesugakiTaunt': {
+                // メスガキ全力煽り: ねぇ♡で始まり、語尾を徹底的に煽り変換
+                const isJa = /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/.test(text);
+                let result;
+                if (isJa) {
+                    result = text
+                        .replace(/です。/g, 'ですけどぉ？♡')
+                        .replace(/です$/g, 'ですけどぉ？♡')
+                        .replace(/ます。/g, 'ますけどぉ？♡')
+                        .replace(/ます$/g, 'ますけどぉ？♡')
+                        .replace(/ました。/g, 'ましたけどぉ？♡')
+                        .replace(/ました$/g, 'ましたけどぉ？♡')
+                        .replace(/だ。/g, 'だけどぉ？♡💢')
+                        .replace(/だ$/g, 'だけどぉ？♡💢')
+                        .replace(/ない。/g, 'ないんですけどぉ♡')
+                        .replace(/ない$/g, 'ないんですけどぉ♡')
+                        .replace(/。/g, '♡💢')
+                        .replace(/、/g, '♡');
+                    result = 'ねぇねぇ♡ ' + result;
+                    if (!result.endsWith('♡') && !result.endsWith('💢')) result += '♡💢';
+                    result += ' ざぁこざぁこ♡';
+                } else {
+                    result = text.replace(/\./g, '♡💢').replace(/,/g, '♡');
+                    result = 'hey♡ ' + result;
+                    if (!result.endsWith('♡') && !result.endsWith('💢')) result += '♡💢';
+                    result += ' zako zako♡';
+                }
+                return result;
+            }
             default:
                 return text;
         }

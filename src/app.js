@@ -35,6 +35,7 @@
         combining: 'Combining',
         decoration: 'Decoration',
         japanese: '日本語',
+        character: 'キャラ風',
     };
 
     // --- State ---
@@ -46,6 +47,7 @@
         setupEventListeners();
         loadSettings();
         renderGrid('Sample Text');
+        listenForUpdates();
     }
 
     // --- Event Listeners ---
@@ -104,6 +106,42 @@
             }
         });
     }
+
+    // --- Auto Update ---
+    function listenForUpdates() {
+        listen('update-available', (event) => {
+            const { version } = event.payload;
+            showUpdateBanner(version);
+        });
+    }
+
+    function showUpdateBanner(version) {
+        const banner = document.getElementById('update-banner');
+        const versionLabel = document.getElementById('update-version');
+        if (banner && versionLabel) {
+            versionLabel.textContent = `v${version}`;
+            banner.classList.remove('hidden');
+        }
+    }
+
+    async function triggerUpdate() {
+        const banner = document.getElementById('update-banner');
+        const bannerText = banner?.querySelector('.update-banner-text');
+        if (bannerText) {
+            bannerText.textContent = 'アップデート中...';
+        }
+        try {
+            await invoke('install_update');
+        } catch (err) {
+            console.error('Update failed:', err);
+            if (bannerText) {
+                bannerText.textContent = 'アップデート失敗';
+            }
+        }
+    }
+
+    // Expose triggerUpdate for onclick
+    window.triggerUpdate = triggerUpdate;
 
     // --- Settings ---
     async function loadSettings() {

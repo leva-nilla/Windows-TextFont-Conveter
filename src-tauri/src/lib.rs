@@ -33,6 +33,12 @@ struct PopupPayload {
     text: String,
 }
 
+#[derive(Clone, Serialize)]
+struct UpdatePayload {
+    version: String,
+    body: String,
+}
+
 /// Called when the global shortcut is pressed.
 fn handle_shortcut(app: &AppHandle) {
     // Toggle: if popup is already visible, hide it
@@ -189,6 +195,79 @@ fn sync_autostart(app: &AppHandle, enable: bool) {
     }
 }
 
+/// Check for updates in the background and emit event to frontend if available.
+fn check_for_updates(app: AppHandle) {
+    use tauri_plugin_updater::UpdaterExt;
+
+    let handle = app.clone();
+    tauri::async_runtime::spawn(async move {
+        // Delay a few seconds after startup to not block initial UI
+        tauri::async_runtime::spawn_blocking(|| {
+            std::thread::sleep(Duration::from_secs(5));
+        })
+        .await
+        .ok();
+
+        match handle.updater() {
+            Ok(updater) => {
+                match updater.check().await {
+                    Ok(Some(update)) => {
+                        let version = update.version.clone();
+                        let body = update.body.clone().unwrap_or_default();
+                        eprintln!("Update available: {version}");
+                        let _ = handle.emit("update-available", UpdatePayload { version, body });
+                    }
+                    Ok(None) => {
+                        eprintln!("No update available.");
+                    }
+                    Err(e) => {
+                        eprintln!("Update check failed: {e}");
+                    }
+                }
+            }
+            Err(e) => {
+                eprintln!("Updater init failed: {e}");
+            }
+        }
+    });
+}
+
+/// Tauri command: Manually trigger update check from frontend.
+#[tauri::command]
+async fn check_update(app: AppHandle) -> Result<Option<String>, String> {
+    use tauri_plugin_updater::UpdaterExt;
+
+    let updater = app.updater().map_err(|e| e.to_string())?;
+    match updater.check().await {
+        Ok(Some(update)) => Ok(Some(update.version)),
+        Ok(None) => Ok(None),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+/// Tauri command: Download and install available update.
+#[tauri::command]
+async fn install_update(app: AppHandle) -> Result<(), String> {
+    use tauri_plugin_updater::UpdaterExt;
+
+    let updater = app.updater().map_err(|e| e.to_string())?;
+    let update = updater.check().await.map_err(|e| e.to_string())?;
+
+    if let Some(update) = update {
+        update
+            .download_and_install(
+                |_chunk_length, _content_length| {},
+                || {},
+            )
+            .await
+            .map_err(|e| e.to_string())?;
+
+        app.restart();
+    }
+
+    Ok(())
+}
+
 fn setup_tray(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let s = settings::load(&app.handle());
 
@@ -267,7 +346,12 @@ pub fn run() {
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             None,
         ))
+        .plugin(tauri_plugin_process::init())
         .setup(|app| {
+            // Initialize updater plugin
+            app.handle()
+                .plugin(tauri_plugin_updater::Builder::new().build())?;
+
             // Register global shortcut: Ctrl+Shift+F
             let shortcut = Shortcut::new(
                 Some(Modifiers::CONTROL | Modifiers::SHIFT),
@@ -282,6 +366,9 @@ pub fn run() {
             // Setup system tray
             setup_tray(app)?;
 
+            // Check for updates in background
+            check_for_updates(app.handle().clone());
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -289,6 +376,8 @@ pub fn run() {
             dismiss_popup,
             get_settings,
             save_settings,
+            check_update,
+            install_update,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

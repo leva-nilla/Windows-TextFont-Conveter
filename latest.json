@@ -1,0 +1,11 @@
+{
+  "version": "1.3.0",
+  "notes": "v1.3.0: 自動アップデート機能追加、キャラ風フォントバリエーション追加（ヒソカ風・メスガキ風）",
+  "pub_date": "2026-04-23T10:00:00Z",
+  "platforms": {
+    "windows-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTZ1NYbnJ3VzcydWdQby9zS2ZDMWh0dzY2NWg4OGdnYjlGTkFXTGt4a3VSLzB4RVlTUHF6Q2Y1V0FoS014dG0rMnZWcHhwWVZZa0I2OTFtY0p6TEJES1NRN1lyK2R4Q0FvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzc2OTA5MTIwCWZpbGU6Rm9udENvbnZlcnRlcl8xLjMuMF94NjQtc2V0dXAuZXhlClVxOTFiWFRWalpxcjBaZ0JxalFCRVhTcU9ZSVR6bkVOVFQzSGFFZVAxdTIwK1RxWm5iaWlsQkxNWEVaZVdRTUFZWC9DT0VzdVN4WFQzMjdDSE1hYUF3PT0K",
+      "url": "https://github.com/leva-nilla/Windows-TextFont-Conveter/releases/download/v1.3.0/FontConverter_1.3.0_x64-setup.exe"
+    }
+  }
+}

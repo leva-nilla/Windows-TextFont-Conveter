@@ -502,3 +502,60 @@ html, body {
 .settings-body .setting-item + .setting-item {
     /* subtle visual grouping */
 }
+
+/* ============================================
+   Update Banner
+   ============================================ */
+.update-banner {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(6, 182, 212, 0.15));
+    border-top: 1px solid rgba(34, 197, 94, 0.3);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    animation: updatePulse 2s ease-in-out infinite;
+}
+
+.update-banner.hidden {
+    display: none;
+}
+
+.update-banner:hover {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(6, 182, 212, 0.25));
+}
+
+@keyframes updatePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+}
+
+.update-banner-icon {
+    font-size: 14px;
+    color: var(--success-color);
+}
+
+.update-banner-text {
+    flex: 1;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.update-banner-action {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--success-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 8px;
+    background: rgba(34, 197, 94, 0.15);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.update-banner:hover .update-banner-action {
+    background: rgba(34, 197, 94, 0.3);
+}
