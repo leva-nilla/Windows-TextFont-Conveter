@@ -1,11 +1,11 @@
 {
-  "version": "1.4.1",
-  "notes": "v1.4.1: キャラ風変換の大幅改善 - メスガキ煽りバリエーション強化、ヒソカ僕→ボク変換、ジョジョ活用修正、全キャラにプレフィックス/サフィックスバリエーション追加",
-  "pub_date": "2026-04-23T12:00:00Z",
+  "version": "1.4.2",
+  "notes": "v1.4.2: アイコンの透過処理を修正、設定画面にバージョン情報を追加",
+  "pub_date": "2026-04-23T12:30:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTZ1NYbnJ3VzcydXJyT2ZYcU5ZMFM0ZmhlVENDOXlvdVJPeDR2RzJ0YStBOWM5VTRoTG1HaWZEdG1UaGMyOGdQb0s2U0RsaHNxMWU4cGJ0V0ZyMVJjM2dvd2FsOWp5aUFZPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzc2OTEzNzY4CWZpbGU6Rm9udENvbnZlcnRlcl8xLjQuMV94NjQtc2V0dXAuZXhlCk5rdE5GWWwwaG9Oa1VvSUplckd5T2tpamdYbHBoSGxTOEtqaVV2R3B5a3MzY2VZUXBDMk55aHplVWlyOG4yZk9KNXJaZ2cxbndpRzErOXV4NVFUTUJ3PT0K",
-      "url": "https://github.com/leva-nilla/Windows-TextFont-Conveter/releases/download/v1.4.1/FontConverter_1.4.1_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTZ1NYbnJ3VzcydW9pbmEvWThSUWRlazByKzFsazZEYkxZVlVDenhUMmlVZ1o3ME85eTJJTjhSMi9LRnJJcDhaRlkxYVVrU0Y1cnFjN2IzYVhKQkt0Q1ZBS2ZGQStZVndFPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzc2OTE0Njg0CWZpbGU6Rm9udENvbnZlcnRlcl8xLjQuMl94NjQtc2V0dXAuZXhlCm40RTJZQmhwUXlvOGM5aUxXY2pCdGt4SG9XcUxFZG5PTXluUGM1SWFWWHZsQm40bFZUVEgzU00xYjU1Y05IcHp6R1UyMEpVQTZvaHVobFZkTmV1TkRRPT0K",
+      "url": "https://github.com/leva-nilla/Windows-TextFont-Conveter/releases/download/v1.4.2/FontConverter_1.4.2_x64-setup.exe"
     }
   }
 }

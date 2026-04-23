@@ -1,7 +1,7 @@
 {
   "name": "font-converter",
-  "version": "1.4.1",
-  "description": "Unicode Font Converter for Windows - 繧ｰ繝ｭ繝ｼ繝舌Ν繧ｷ繝ｧ繝ｼ繝医き繝・ヨ縺ｧ繝・く繧ｹ繝医ｒ陬・｣ｾ繝輔か繝ｳ繝医↓螟画鋤",
+  "version": "1.4.2",
+  "description": "Unicode Font Converter for Windows - 郢ｧ・ｰ郢晢ｽｭ郢晢ｽｼ郢晁・ﾎ晉ｹｧ・ｷ郢晢ｽｧ郢晢ｽｼ郢晏現縺咲ｹ昴・繝ｨ邵ｺ・ｧ郢昴・縺冗ｹｧ・ｹ郢晏現・帝勳繝ｻ・｣・ｾ郢晁ｼ斐°郢晢ｽｳ郢晏現竊楢棔逕ｻ驪､",
   "scripts": {
     "tauri": "tauri",
     "tauri:dev": "tauri dev",

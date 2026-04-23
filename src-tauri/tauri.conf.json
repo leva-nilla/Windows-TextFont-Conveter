@@ -1,6 +1,6 @@
 {
   "productName": "FontConverter",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "identifier": "com.fontconverter.app",
   "build": {
     "frontendDist": "../src"
