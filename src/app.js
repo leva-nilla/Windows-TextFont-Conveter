@@ -55,11 +55,18 @@
     const MAX_HISTORY = 5;
 
     // --- Initialize ---
-    function init() {
+    async function init() {
         setupEventListeners();
         loadSettings();
         renderGrid('Sample Text');
         listenForUpdates();
+        
+        try {
+            const version = await window.__TAURI__.app.getVersion();
+            document.getElementById('app-version-desc').textContent = 'v' + version;
+        } catch (e) {
+            document.getElementById('app-version-desc').textContent = '不明';
+        }
     }
 
     // --- Event Listeners ---
